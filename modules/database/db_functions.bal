@@ -1,22 +1,9 @@
-import ballerina/log;
-import ballerina/sql;
-import user_crud_service.database;
-import user_crud_service.database:db_queries;
-import user_crud_service.database:db_connect;
-
-public function insertUser(database:UserInput user) returns error? {
-    check db_connect:dbClient->execute(
-        db_queries:INSERT_USER,
-        user.username,
-        user.email,
-        user.firstName,
-        user.lastName,
-        user.age
-    );
+public function insertUser(UserInput user) returns error? {
+    _ = check dbClient->execute(`INSERT INTO users (username, email, first_name, last_name, age) VALUES (${user.username}, ${user.email}, ${user.firstName}, ${user.lastName}, ${user.age})`);
 }
 
-public function getUserById(int id) returns database:User|error {
-    stream<record {}, error?> result = db_connect:dbClient->query(db_queries:GET_USER_BY_ID, id);
+public function getUserById(int id) returns User|error {
+    stream<record {}, error?> result = dbClient->query(`SELECT * FROM users WHERE id = ${id}`);
     record {}? row = check result.next();
     check result.close();
 
@@ -34,10 +21,9 @@ public function getUserById(int id) returns database:User|error {
     return error("User not found");
 }
 
-public function searchUsersByUsername(string pattern) returns database:User[]|error {
-    stream<record {}, error?> result = db_connect:dbClient->query(
-        db_queries:SEARCH_USERS_BY_USERNAME, "%" + pattern + "%");
-    database:User[] users = [];
+public function searchUsersByUsername(string pattern) returns User[]|error {
+    stream<record {}, error?> result = dbClient->query(`SELECT * FROM users WHERE username LIKE ${"%" + pattern + "%"}`);
+    User[] users = [];
     error? e = result.forEach(function(record {} row) {
         users.push({
             id: <int>row["id"],
@@ -52,18 +38,10 @@ public function searchUsersByUsername(string pattern) returns database:User[]|er
     return users;
 }
 
-public function updateUser(database:User user) returns error? {
-    check db_connect:dbClient->execute(
-        db_queries:UPDATE_USER,
-        user.username,
-        user.email,
-        user.firstName,
-        user.lastName,
-        user.age,
-        user.id
-    );
+public function updateUser(User user) returns error? {
+    _ = check dbClient->execute(`UPDATE users SET username = ${user.username}, email = ${user.email}, first_name = ${user.firstName}, last_name = ${user.lastName}, age = ${user.age} WHERE id = ${user.id}`);
 }
 
 public function deleteUser(int id) returns error? {
-    check db_connect:dbClient->execute(db_queries:DELETE_USER, id);
+    _ = check dbClient->execute(`DELETE FROM users WHERE id = ${id}`);
 }
