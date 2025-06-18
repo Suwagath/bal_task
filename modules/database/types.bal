@@ -1,5 +1,3 @@
-import ballerina/time;
-
 public type User record {
     int id;
     string username;
@@ -7,8 +5,6 @@ public type User record {
     string firstName;
     string lastName;
     int? age;
-    time:Utc createdTime;
-    time:Utc updatedTime;
 };
 
 public type UserInput record {

@@ -1,6 +1,0 @@
-[dbConfig]
-host = "localhost"
-user = "root"
-password = "Castroaterice2day"
-database = "social_media_database"
-port = 3306
