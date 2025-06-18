@@ -9,12 +9,12 @@ public function getUserById(int id) returns User|error {
 
     if row is record {} {
         return {
-            id: <int>row["id"],
-            username: <string>row["username"],
-            email: <string>row["email"],
-            firstName: <string>row["first_name"],
-            lastName: <string>row["last_name"],
-            age: <int?>row["age"]
+            id: check row["id"].ensureType(int),
+            username: check row["username"].ensureType(string),
+            email: check row["email"].ensureType(string),
+            firstName: check row["first_name"].ensureType(string),
+            lastName: check row["last_name"].ensureType(string),
+            age: row["age"] is int ? check row["age"].ensureType(int) : ()
         };
     }
 
@@ -25,14 +25,25 @@ public function searchUsersByUsername(string pattern) returns User[]|error {
     stream<record {}, error?> result = dbClient->query(`SELECT * FROM users WHERE username LIKE ${"%" + pattern + "%"}`);
     User[] users = [];
     error? e = result.forEach(function(record {} row) {
-        users.push({
-            id: <int>row["id"],
-            username: <string>row["username"],
-            email: <string>row["email"],
-            firstName: <string>row["first_name"],
-            lastName: <string>row["last_name"],
-            age: <int?>row["age"]
-        });
+        // Safe casting with null checks
+        anydata idValue = row["id"];
+        anydata usernameValue = row["username"];
+        anydata emailValue = row["email"];
+        anydata firstNameValue = row["first_name"];
+        anydata lastNameValue = row["last_name"];
+        anydata ageValue = row["age"];
+
+        if idValue is int && usernameValue is string && emailValue is string && 
+           firstNameValue is string && lastNameValue is string {
+            users.push({
+                id: idValue,
+                username: usernameValue,
+                email: emailValue,
+                firstName: firstNameValue,
+                lastName: lastNameValue,
+                age: ageValue is int ? ageValue : ()
+            });
+        }
     });
     check result.close();
     return users;
@@ -44,4 +55,32 @@ public function updateUser(User user) returns error? {
 
 public function deleteUser(int id) returns error? {
     _ = check dbClient->execute(`DELETE FROM users WHERE id = ${id}`);
+}
+
+public function getAllUsers() returns User[]|error {
+    stream<record {}, error?> result = dbClient->query(`SELECT * FROM users ORDER BY id`);
+    User[] users = [];
+    error? e = result.forEach(function(record {} row) {
+        // Safe casting with null checks
+        anydata idValue = row["id"];
+        anydata usernameValue = row["username"];
+        anydata emailValue = row["email"];
+        anydata firstNameValue = row["first_name"];
+        anydata lastNameValue = row["last_name"];
+        anydata ageValue = row["age"];
+
+        if idValue is int && usernameValue is string && emailValue is string && 
+           firstNameValue is string && lastNameValue is string {
+            users.push({
+                id: idValue,
+                username: usernameValue,
+                email: emailValue,
+                firstName: firstNameValue,
+                lastName: lastNameValue,
+                age: ageValue is int ? ageValue : ()
+            });
+        }
+    });
+    check result.close();
+    return users;
 }
