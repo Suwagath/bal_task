@@ -3,10 +3,10 @@ import user_crud_service.database as db;
 
 service /users on new http:Listener(8080) {
 
-    resource function post insert(http:Caller caller, http:Request req) returns error? {
+    resource function post add(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
         db:UserInput user = check payload.cloneWithType();
-        check db:insertUser(user);
+        check db:addUser(user);
         check caller->respond({ message: "User inserted successfully." });
     }
 

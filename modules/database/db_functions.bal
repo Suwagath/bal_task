@@ -1,6 +1,6 @@
 import ballerina/io;
 
-public function insertUser(UserInput user) returns error? {
+public function addUser(UserInput user) returns error? {
     _ = check dbClient->execute(`INSERT INTO users (username, email, first_name, last_name, age) VALUES (${user.username}, ${user.email}, ${user.firstName}, ${user.lastName}, ${user.age})`);
 }
 
