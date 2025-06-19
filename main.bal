@@ -10,8 +10,8 @@ service /users on new http:Listener(8080) {
         check caller->respond({ message: "User inserted successfully." });
     }
 
-    resource function get getById(http:Caller caller, http:Request req, int id) returns error? {
-        db:User|error user = db:getUserById(id);
+    resource function get id/[int userId](http:Caller caller, http:Request req) returns error? {
+        db:User|error user = db:getUserById(userId);
         if user is db:User {
             check caller->respond(user);
         } else {
@@ -24,20 +24,17 @@ service /users on new http:Listener(8080) {
         check caller->respond(users);
     }
 
-    resource function get getAll(http:Caller caller, http:Request req) returns error? {
-        db:User[] users = check db:getAllUsers();
-        check caller->respond(users);
+    resource function get .() returns db:User[]|error {
+        return db:getAllUsers();
     }
 
-    resource function put update(http:Caller caller, http:Request req) returns error? {
-        json payload = check req.getJsonPayload();
-        db:User user = check payload.cloneWithType();
+    resource function put .(@http:Payload db:User user) returns json|error {
         check db:updateUser(user);
-        check caller->respond({ message: "User updated successfully." });
+        return { message: "User updated successfully." };
     }
 
-    resource function delete delete(http:Caller caller, http:Request req, int id) returns error? {
-        check db:deleteUser(id);
-        check caller->respond({ message: "User deleted successfully." });
+    resource function delete id/[int userId]() returns json|error {
+        check db:deleteUser(userId);
+        return { message: "User deleted successfully." };
     }
 }

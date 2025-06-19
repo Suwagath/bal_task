@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.12.6"
+distribution-version = "2201.12.7"
 
 [[package]]
 org = "ballerina"
@@ -333,7 +333,6 @@ dependencies = [
 ]
 modules = [
 	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service"},
-	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service.database"},
-	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service.utility"}
+	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service.database"}
 ]
 

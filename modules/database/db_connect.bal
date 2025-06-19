@@ -5,7 +5,7 @@ configurable string dbHost = "localhost";
 configurable int dbPort = 3306;
 configurable string dbName = "my_bal";
 configurable string dbUser = "root";
-configurable string dbPassword = "Castroaterice2day";
+configurable string dbPassword = "Castroaterice@2day";
 
 public final mysql:Client dbClient = check new(
     host = dbHost,

@@ -1,14 +1,26 @@
+import ballerina/io;
+
 public function insertUser(UserInput user) returns error? {
     _ = check dbClient->execute(`INSERT INTO users (username, email, first_name, last_name, age) VALUES (${user.username}, ${user.email}, ${user.firstName}, ${user.lastName}, ${user.age})`);
 }
 
 public function getUserById(int id) returns User|error {
+    io:println("Debug: Getting user with ID: ", id);
+    
+    // Test connection first
+    stream<record {}, error?> testResult = dbClient->query(`SELECT 1 as test`);
+    record {}? testRow = check testResult.next();
+    check testResult.close();
+    io:println("Debug: Connection test result: ", testRow);
+    
     stream<record {}, error?> result = dbClient->query(`SELECT * FROM users WHERE id = ${id}`);
     record {}? row = check result.next();
+    io:println("Debug: Retrieved row: ", row);
     check result.close();
 
     if row is record {} {
-        return {
+        io:println("Debug: Row found, processing...");
+        User user = {
             id: check row["id"].ensureType(int),
             username: check row["username"].ensureType(string),
             email: check row["email"].ensureType(string),
@@ -16,15 +28,18 @@ public function getUserById(int id) returns User|error {
             lastName: check row["last_name"].ensureType(string),
             age: row["age"] is int ? check row["age"].ensureType(int) : ()
         };
+        io:println("Debug: Created user object: ", user);
+        return user;
     }
 
+    io:println("Debug: No row found");
     return error("User not found");
 }
 
 public function searchUsersByUsername(string pattern) returns User[]|error {
     stream<record {}, error?> result = dbClient->query(`SELECT * FROM users WHERE username LIKE ${"%" + pattern + "%"}`);
     User[] users = [];
-    error? e = result.forEach(function(record {} row) {
+    check result.forEach(function(record {} row) {
         // Safe casting with null checks
         anydata idValue = row["id"];
         anydata usernameValue = row["username"];
@@ -60,7 +75,7 @@ public function deleteUser(int id) returns error? {
 public function getAllUsers() returns User[]|error {
     stream<record {}, error?> result = dbClient->query(`SELECT * FROM users ORDER BY id`);
     User[] users = [];
-    error? e = result.forEach(function(record {} row) {
+    check result.forEach(function(record {} row) {
         // Safe casting with null checks
         anydata idValue = row["id"];
         anydata usernameValue = row["username"];
