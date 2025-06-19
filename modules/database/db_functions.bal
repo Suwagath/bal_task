@@ -20,13 +20,17 @@ public function getUserById(int id) returns User|error {
 
     if row is record {} {
         io:println("Debug: Row found, processing...");
+        
+        // Access the data from the "value" field
+        record {} userData = <record {}>row["value"];
+        
         User user = {
-            id: check row["id"].ensureType(int),
-            username: check row["username"].ensureType(string),
-            email: check row["email"].ensureType(string),
-            firstName: check row["first_name"].ensureType(string),
-            lastName: check row["last_name"].ensureType(string),
-            age: row["age"] is int ? check row["age"].ensureType(int) : ()
+            id: <int>userData["id"],
+            username: <string>userData["username"],
+            email: <string>userData["email"],
+            firstName: <string>userData["first_name"],
+            lastName: <string>userData["last_name"],
+            age: <int>userData["age"]
         };
         io:println("Debug: Created user object: ", user);
         return user;
