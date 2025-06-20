@@ -16,24 +16,10 @@ Dependencies.toml
 
 # Environment and Configuration
 Config.toml
-.env
-.env.local
-.env.development
-.env.test
-.env.production
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
 
 # Temporary files
 *.tmp
 *.temp
 temp/
 tmp/
-
-
-# Maven (if any)
-target/
 
