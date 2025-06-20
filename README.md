@@ -2,7 +2,7 @@
 
 A RESTful user management service built with Ballerina. This service provides CRUD operations for managing users with MySQL database integration.
 
-> **Code Analysis Documentation**: For a detailed analysis of the previous code implementation and improvements, please refer to this [Google Doc](https://docs.google.com/document/d/1sH_zae6Q5zrXgsVcPYiaxx0gws9pCsRqlh2fiTur-44/edit?usp=sharing).
+> **Code Analysis Documentation**: Discusses an old code segment implementation and how it fails in terms of Ballerina's best coding practices. [Google Doc](https://docs.google.com/document/d/1sH_zae6Q5zrXgsVcPYiaxx0gws9pCsRqlh2fiTur-44/edit?usp=sharing).
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
