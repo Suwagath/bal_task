@@ -260,6 +260,15 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "random"
+version = "1.7.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "time"}
+]
+
+[[package]]
+org = "ballerina"
 name = "sql"
 version = "1.16.0"
 dependencies = [
@@ -308,14 +317,27 @@ modules = [
 
 [[package]]
 org = "ballerinax"
+name = "cdc"
+version = "1.0.3"
+dependencies = [
+	{org = "ballerina", name = "crypto"},
+	{org = "ballerina", name = "data.jsondata"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerinai", name = "observe"}
+]
+
+[[package]]
+org = "ballerinax"
 name = "mysql"
-version = "1.13.0"
+version = "1.16.0"
 dependencies = [
 	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "random"},
 	{org = "ballerina", name = "sql"},
-	{org = "ballerina", name = "time"}
+	{org = "ballerina", name = "time"},
+	{org = "ballerinax", name = "cdc"}
 ]
 modules = [
 	{org = "ballerinax", packageName = "mysql", moduleName = "mysql"}
@@ -323,7 +345,7 @@ modules = [
 
 [[package]]
 org = "suwagath"
-name = "user_crud_service"
+name = "bal_task"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
@@ -332,7 +354,7 @@ dependencies = [
 	{org = "ballerinax", name = "mysql"}
 ]
 modules = [
-	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service"},
-	{org = "suwagath", packageName = "user_crud_service", moduleName = "user_crud_service.database"}
+	{org = "suwagath", packageName = "bal_task", moduleName = "bal_task"},
+	{org = "suwagath", packageName = "bal_task", moduleName = "bal_task.database"}
 ]
 

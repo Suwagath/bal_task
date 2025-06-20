@@ -1,8 +1,8 @@
 [package]
 org = "suwagath"
-name = "user_crud_service"
+name = "bal_task"
 version = "0.1.0"
-distribution = "2201.12.6"
+distribution = "2201.12.7"
 
 [build-options]
 observabilityIncluded = true
@@ -10,9 +10,9 @@ observabilityIncluded = true
 [[dependency]]
 org = "ballerinax"
 name = "mysql"
-version = "1.13.0"
+version = "1.16.0"
 
 [[platform.java11.dependency]]
 groupId = "com.mysql"
 artifactId = "mysql-connector-j"
-version = "8.0.33" 
+version = "8.0.33"

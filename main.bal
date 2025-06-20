@@ -1,7 +1,9 @@
 import ballerina/http;
-import user_crud_service.database as db;
+import bal_task.database as db;
 
-service /users on new http:Listener(8080) {
+configurable int serverPort = 8080;
+
+service /users on new http:Listener(serverPort) {
 
     resource function post add(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
