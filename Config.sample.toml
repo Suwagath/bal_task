@@ -1,6 +1,6 @@
 [bal_task.database]
 dbHost = "localhost"
 dbPort = 3306
-dbName = "my_bal"
+dbName = "created_database's_name"
 dbUser = "your_username"
 dbPassword = "your_password" 
