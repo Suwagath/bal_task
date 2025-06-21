@@ -26,7 +26,7 @@ A RESTful user management service built with Ballerina. This service provides CR
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Suwagath/bal_task.git
    cd bal_task
    ```
 
