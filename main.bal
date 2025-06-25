@@ -1,5 +1,6 @@
-import ballerina/http;
 import bal_task.database as db;
+
+import ballerina/http;
 import ballerina/os;
 
 # Port configuration for the HTTP service
@@ -11,59 +12,67 @@ configurable int serverPort = 8080;
 service /users on new http:Listener(os:getEnv("BAL_TEST_MODE") != "" ? 8081 : serverPort) {
 
     # Creates a new user in the system
-    # + caller - The HTTP caller object
-    # + req - The HTTP request containing user data
-    # + return - Error if operation fails
-    resource function post add(http:Caller caller, http:Request req) returns error? {
-        json payload = check req.getJsonPayload();
-        db:UserInput user = check payload.cloneWithType();
-        check db:addUser(user);
-        check caller->respond({ message: "User added successfully." });
+    # + payload - The user data to create
+    # + return - Created(201) response on success or BadRequest(400) on validation failure
+    resource function post add(@http:Payload db:UserInput payload) returns http:Created|http:BadRequest|error {
+        error? result = db:addUser(payload);
+        if result is error {
+            return <http:BadRequest>{body: {message: "Failed to add user: " + result.message()}};
+        }
+        return <http:Created>{body: {message: "User added successfully."}};
     }
 
     # Retrieves a user by their ID
-    # + caller - The HTTP caller object
-    # + req - The HTTP request
     # + userId - ID of the user to retrieve
-    # + return - Error if operation fails
-    resource function get id/[int userId](http:Caller caller, http:Request req) returns error? {
+    # + return - User data with OK(200) response or NotFound(404) if user doesn't exist
+    resource function get id/[int userId]() returns http:Ok|http:NotFound|error {
         db:User|error user = db:getUserById(userId);
         if user is db:User {
-            check caller->respond(user);
-        } else {
-            check caller->respond({ message: "User not found." });
+            return <http:Ok>{body: user};
         }
+        return <http:NotFound>{body: {message: "User not found."}};
     }
 
     # Searches for users by username
-    # + caller - The HTTP caller object
-    # + req - The HTTP request
     # + username - Username to search for
-    # + return - Error if operation fails
-    resource function get search(http:Caller caller, http:Request req, string username) returns error? {
+    # + return - OK(200) with matching users or NotFound(404) if no users found
+    resource function get search(string username) returns http:Ok|http:NotFound|error {
         db:User[] users = check db:searchUsersByUsername(username);
-        check caller->respond(users);
+        if users.length() > 0 {
+            return <http:Ok>{body: users};
+        }
+        return <http:NotFound>{body: {message: "No users found matching the search criteria."}};
     }
 
     # Retrieves all users in the system
-    # + return - Array of users or error if operation fails
-    resource function get .() returns db:User[]|error {
-        return db:getAllUsers();
+    # + return - OK(200) with array of users or NotFound(404) if no users exist
+    resource function get .() returns http:Ok|http:NotFound|error {
+        db:User[] users = check db:getAllUsers();
+        if users.length() > 0 {
+            return <http:Ok>{body: users};
+        }
+        return <http:NotFound>{body: {message: "No users found in the system."}};
     }
 
     # Updates an existing user
     # + user - Updated user data
-    # + return - Success message or error if operation fails
-    resource function put .(@http:Payload db:User user) returns json|error {
-        check db:updateUser(user);
-        return { message: "User updated successfully." };
+    # + return - OK(200) on successful update or NotFound(404) if user doesn't exist
+    resource function put .(@http:Payload db:User user) returns http:Ok|http:NotFound|error {
+        error? result = db:updateUser(user);
+        if result is error {
+            return <http:NotFound>{body: {message: "User not found or update failed."}};
+        }
+        return <http:Ok>{body: {message: "User updated successfully."}};
     }
 
     # Deletes a user by their ID
     # + userId - ID of the user to delete
-    # + return - Success message or error if operation fails
-    resource function delete id/[int userId]() returns json|error {
-        check db:deleteUser(userId);
-        return { message: "User deleted successfully." };
+    # + return - OK(200) on successful deletion or NotFound(404) if user doesn't exist
+    resource function delete id/[int userId]() returns http:Ok|http:NotFound|error {
+        error? result = db:deleteUser(userId);
+        if result is error {
+            return <http:NotFound>{body: {message: "User not found or deletion failed."}};
+        }
+        return <http:Ok>{body: {message: "User deleted successfully."}};
     }
 }

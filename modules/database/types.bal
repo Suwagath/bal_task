@@ -35,4 +35,4 @@ public type UserInput record {
 public type Error record {
     string message;
     string? cause;
-}; 
+};
